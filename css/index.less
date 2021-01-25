@@ -1,0 +1,109 @@
+.page-container{
+    width: 100%;
+    height: 100%;
+    .page{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        .hand-up {
+            width: 0.83rem;
+            height: 0.64rem;
+            background: url(../assets/up.png) no-repeat left top/100% 100%;
+            position: absolute;
+            bottom: 0.3rem;
+            left: 50%;
+            transform: translate(-50%);
+            opacity: 0.5;
+        }
+        overflow: hidden;
+    }
+    .page1{
+        background: url(../assets/city.png) no-repeat left bottom / 100% 40%,
+        url(../assets/cover-bg.jpg) left top / 100% 100% no-repeat #ae0806;
+        .g-btn{
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 7.4rem;
+        }
+    }
+    .page2{
+        text-align: center;
+        .g-tage{
+            margin: 0 auto;
+            margin-top: 1rem;
+        }
+        .note{
+            width: 5.6rem;
+            font-size: 0.35rem;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 5.3rem;
+            bottom: 1.3rem;
+            background: #e8d7c6;
+            padding: 0.34rem;
+            border-radius: 5px;
+            box-shadow: 0 3px 5px rgba(0, 0,0, 0.5);
+            &::before{
+                position: absolute;
+                content: "";
+                left: 0.4rem;
+                top: -0.1rem;
+                width: 0.43rem;
+                height: 0.8rem;
+                background: url(../assets/note-attach.png) no-repeat left top /100% 100%;
+            }
+            pre{
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                margin: 0;
+            }
+        }
+    }
+    .page3{
+        .bless-label{
+            width: 3.2rem;
+            height: 4.92rem;
+            background: url(../assets/bless-label.png) no-repeat left top /100% 100%;
+            position: absolute;
+            left: 50%;
+            margin-left: -1.6rem;
+            top: 3rem;
+            z-index: 2;
+        }
+        .g-paper{
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%);
+            top: 7.62rem;
+            z-index: 1;
+            .paper-content{
+                width: 3.97rem;
+                height: 0.79rem;
+                background: url(../assets/shaken.png) no-repeat left top /100% 100%;
+                padding: 0;
+                margin: 0 auto;
+            }
+        }
+        >.g-btn{
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+}
+.music{
+    width: 0.59rem;
+    height: 0.59rem;
+    background: url(../assets/music.png) no-repeat left top /100% 100%;
+    position: fixed;
+    right: 0.3rem;
+    top: 0.7rem;
+    transition: 0.3s;
+    &.music-close{
+        opacity: 0.3;
+    }
+}
