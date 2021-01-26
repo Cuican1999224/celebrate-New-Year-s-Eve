@@ -57,10 +57,8 @@
 
     resp = await resp.json();
     resp = resp.data;
-    resp.audioUrl = null
+    // resp.audioUrl = null
     console.log(resp);
-
-
     //2.根据远程数据，设置页面中的各种区域
     (function() {
         $('.page1 .g-btn').innerText = `来自${resp.author}的祝福`;
@@ -80,12 +78,41 @@
         }
         if (resp.audioUrl) {
             //设置音频
+            $("#soundAudio").src = resp.audioUrl
         } else {
-            $(".page2 .g-tape").remove();
+            $(".page2 .playing").remove();
             $(".page2 .g-btn").remove();
             $(".page2 .note").style.top = "1rem"
         }
-    })()
+        //设置背景音乐的音频
+        $("#bgMusicAudio").src = `./assets/media/${resp.bgMusicIndex}.mp3`
+    })();
+    //3.实现摇一摇
+    (function() {
+        /**
+         * 启用摇一摇事件
+         * 由于某些手机的限制，该方法必须在某个元素点击后调用
+         **/
+        async function regShakenEvent() {
+            try {
+                await utils.regShakenEvent(); // 启用摇一摇
+            } catch (err) {
+                /*
+                 * 不支持devicemotion事件的手机
+                 * 或
+                 * 用户不允许监听设备运动
+                 */
+                alert("由于权限问题，无法使用摇一摇功能");
+            }
+        }
+        $(".page3 .g-modal .g-btn").onclick = function() {
+            regShakenEvent();
+            $(".page3 .g-modal").remove()
+        };
+        window.addEventListener('shaken', function() {
+            console.log('shaken');
+        })
+    })();
 
     hideLoading(); //关闭加载
 })()

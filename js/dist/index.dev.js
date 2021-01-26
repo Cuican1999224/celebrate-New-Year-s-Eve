@@ -57,25 +57,25 @@
 
 (function _callee() {
   var resp;
-  return regeneratorRuntime.async(function _callee$(_context) {
+  return regeneratorRuntime.async(function _callee$(_context2) {
     while (1) {
-      switch (_context.prev = _context.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
           showLoading(); //加载中
           //1.获取数据
 
-          _context.next = 3;
+          _context2.next = 3;
           return regeneratorRuntime.awrap(fetch(" https://bless.yuanjin.tech/api/bless?id=".concat(location.search.replace("?", ""))));
 
         case 3:
-          resp = _context.sent;
-          _context.next = 6;
+          resp = _context2.sent;
+          _context2.next = 6;
           return regeneratorRuntime.awrap(resp.json());
 
         case 6:
-          resp = _context.sent;
-          resp = resp.data;
-          resp.audioUrl = null;
+          resp = _context2.sent;
+          resp = resp.data; // resp.audioUrl = null
+
           console.log(resp); //2.根据远程数据，设置页面中的各种区域
 
           (function () {
@@ -95,19 +95,72 @@
               };
             }
 
-            if (resp.audioUrl) {//设置音频
+            if (resp.audioUrl) {
+              //设置音频
+              $("#soundAudio").src = resp.audioUrl;
             } else {
-              $(".page2 .g-tape").remove();
+              $(".page2 .playing").remove();
               $(".page2 .g-btn").remove();
               $(".page2 .note").style.top = "1rem";
+            } //设置背景音乐的音频
+
+
+            $("#bgMusicAudio").src = "./assets/media/".concat(resp.bgMusicIndex, ".mp3");
+          })(); //3.实现摇一摇
+
+
+          (function () {
+            /**
+             * 启用摇一摇事件
+             * 由于某些手机的限制，该方法必须在某个元素点击后调用
+             **/
+            function regShakenEvent() {
+              return regeneratorRuntime.async(function regShakenEvent$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.prev = 0;
+                      _context.next = 3;
+                      return regeneratorRuntime.awrap(utils.regShakenEvent());
+
+                    case 3:
+                      _context.next = 8;
+                      break;
+
+                    case 5:
+                      _context.prev = 5;
+                      _context.t0 = _context["catch"](0);
+
+                      /*
+                       * 不支持devicemotion事件的手机
+                       * 或
+                       * 用户不允许监听设备运动
+                       */
+                      alert("由于权限问题，无法使用摇一摇功能");
+
+                    case 8:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, null, null, [[0, 5]]);
             }
+
+            $(".page3 .g-modal .g-btn").onclick = function () {
+              regShakenEvent();
+              $(".page3 .g-modal").remove();
+            };
+
+            window.addEventListener('shaken', function () {
+              console.log('shaken');
+            });
           })();
 
           hideLoading(); //关闭加载
 
         case 12:
         case "end":
-          return _context.stop();
+          return _context2.stop();
       }
     }
   });
