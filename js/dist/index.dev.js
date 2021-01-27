@@ -1,8 +1,9 @@
 "use strict";
 
+var curPageIndex = 0;
+
 (function () {
   //当前显示页面索引
-  var curPageIndex = 0;
   var pageContainer = $('.page-container'); //设置页面容器的margin-top为合适的值
 
   function toPage() {
@@ -56,24 +57,58 @@
 })();
 
 (function _callee() {
-  var resp;
-  return regeneratorRuntime.async(function _callee$(_context2) {
+  var resp, bgMusic, sound, setElementStatus;
+  return regeneratorRuntime.async(function _callee$(_context3) {
     while (1) {
-      switch (_context2.prev = _context2.next) {
+      switch (_context3.prev = _context3.next) {
         case 0:
+          setElementStatus = function _ref() {
+            //设置右上角元素的状态
+            if (bgMusic.audio.pause) {
+              //音乐暂停，添加类样式 music-close
+              $('.music').classList.add('music-close');
+            } else {
+              //音乐正在播放
+              $('.music').classList.remove('music-close');
+            } //设置磁带的状态
+
+
+            if (sound.audio.paused) {
+              //语音没有播放
+              $(".page2 .g-tage1").classList.remove('palying');
+            } else {
+              $('.page2 .g-tage1').classList.add('playing');
+            } //按钮文字
+
+
+            var btn = $(".page2 .g-btn");
+
+            if (sound.isPlayed) {
+              if (sound.audio.paused) {
+                //当前声音是暂停的
+                btn.innerText = '播放';
+              } else {
+                btn.innerText = '暂停';
+              }
+            } else {
+              //从来没播放过语音
+              btn.innerText = "播放祝福语音";
+            }
+          };
+
           showLoading(); //加载中
           //1.获取数据
 
-          _context2.next = 3;
+          _context3.next = 4;
           return regeneratorRuntime.awrap(fetch(" https://bless.yuanjin.tech/api/bless?id=".concat(location.search.replace("?", ""))));
 
-        case 3:
-          resp = _context2.sent;
-          _context2.next = 6;
+        case 4:
+          resp = _context3.sent;
+          _context3.next = 7;
           return regeneratorRuntime.awrap(resp.json());
 
-        case 6:
-          resp = _context2.sent;
+        case 7:
+          resp = _context3.sent;
           resp = resp.data; // resp.audioUrl = null
 
           console.log(resp); //2.根据远程数据，设置页面中的各种区域
@@ -99,7 +134,7 @@
               //设置音频
               $("#soundAudio").src = resp.audioUrl;
             } else {
-              $(".page2 .playing").remove();
+              $(".page2 .g-tage1").remove();
               $(".page2 .g-btn").remove();
               $(".page2 .note").style.top = "1rem";
             } //设置背景音乐的音频
@@ -152,15 +187,140 @@
             };
 
             window.addEventListener('shaken', function () {
-              console.log('shaken');
-            });
-          })();
+              showBlessCard();
+            }); //弹出祝福卡片
+
+            function showBlessCard() {
+              if (curPageIndex !== 2) {
+                //只有第三页才能弹出卡片
+                return;
+              }
+
+              ;
+              var divModal = $("#divBless");
+
+              if (divModal) {
+                //先关闭
+                closeBlessCard(); //再打开
+
+                setTimeout(function () {
+                  _showBlessCard();
+                }, 500);
+              } else {
+                _showBlessCard();
+              }
+
+              function _showBlessCard() {
+                var divModal = $$$('div');
+                divModal.id = 'divBless';
+                divModal.className = 'g-modal';
+                divModal.innerHTML = "\n            <div class='bless-card'>\n            <img src=\"./assets/bless-card/0.png\" alt=\"\">\n            <div class=\"g-seal\"></div>\n            <div class=\"close\">\n                <div class=\"close-btn\"></div>\n            </div>\n            </div>";
+                var blessCard = divModal.querySelector(".bless-card");
+                blessCard.style.transition = '500ms';
+                document.body.appendChild(divModal);
+                blessCard.style.transform = 'scale(0)';
+                blessCard.clientHeight; //强行让浏览器渲染一次 reflow
+
+                blessCard.style.transform = 'scale(1)'; //播放摇一摇音频
+
+                var aud = $('#shakenAudio');
+                aud.currentTime = 0; //播放进度归零
+
+                aud.play();
+                divModal.dataset["default"] = true;
+                divModal.onclick = closeBlessCard;
+                divModal.querySelector('.close-btn').dataset["default"] = true;
+              }
+            } //关闭祝福卡片
+
+
+            function closeBlessCard() {
+              var divModal = $("#divBless");
+
+              if (!divModal) {
+                return; //之前没有弹出
+              } //1.先缩小
+
+
+              var blessCaed = divModal.querySelector('.bless-card');
+              blessCaed.style.transform = 'scale(0)'; //2.再关闭
+
+              setTimeout(function () {
+                divModal.remove();
+              }, 500);
+            }
+          })(); //4.控制声音
+          //背景音乐
+
+
+          bgMusic = {
+            audio: $('#bgMusicAudio'),
+            isPlayed: false,
+            //是否播放过
+            play: function play() {
+              return regeneratorRuntime.async(function play$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.prev = 0;
+                      _context2.next = 3;
+                      return regeneratorRuntime.awrap(this.audio.play());
+
+                    case 3:
+                      this.isPlayed = true;
+                      _context2.next = 9;
+                      break;
+
+                    case 6:
+                      _context2.prev = 6;
+                      _context2.t0 = _context2["catch"](0);
+                      alert('您的设备不支持自动播放，您可以手动点击右上角的按钮播放背景音乐');
+
+                    case 9:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              }, null, this, [[0, 6]]);
+            },
+            //暂停
+            pause: function pause() {
+              this.audio.pause();
+            },
+            //设置音量
+            setVolume: function setVolume(value) {
+              this.audio.volume = value;
+            }
+          }; //祝福语音
+
+          sound = {
+            audio: $('#soundAudio'),
+            isPlayed: false,
+            //是否播放过
+            play: function play() {
+              this.audio.play();
+              this.isPlayed = true; //设置背景音乐的音量小一点
+
+              bgMusic.setVolume(0.1); //播放语音时，有可能顺带播放背景音乐
+
+              if (!bgMusic.isPlayed) {
+                bgMusic.play();
+              }
+            },
+            pause: function pause() {
+              this.audio.pause();
+              bgMusic.setVolume(1);
+            }
+          }; //将与声音相关的所有元素设置为正确的状态
+
+          // bgMusic.play(); //最开始播放背景音乐
+          setElementStatus(); //设置状态
 
           hideLoading(); //关闭加载
 
-        case 12:
+        case 16:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
     }
   });
