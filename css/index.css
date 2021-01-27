@@ -100,6 +100,7 @@
   right: 0.3rem;
   top: 0.7rem;
   transition: 0.3s;
+  z-index: 99;
 }
 .music.music-close {
   opacity: 0.3;
